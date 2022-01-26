@@ -38,5 +38,21 @@ function(input, output) {
     }
   )
   
+  output$table_contents <- renderTable({
+    
+    req(input$uploaded_file)
+    
+    tryCatch(
+      {
+        df <- read.csv(input$uploaded_file$datapath)
+      },
+      error = function(e) {
+        # return a safeError if a parsing error occurs
+        stop(safeError(e))
+      }
+    )
+    return(df)
+  })
+  
 }
 

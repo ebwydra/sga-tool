@@ -1,6 +1,7 @@
 library(shiny)
 library(dplyr)
 library(tidyr)
+library(stringr)
 
 #########
 # SETUP #
@@ -46,10 +47,80 @@ determine_cutoff <- function(ga, sex) {
 # Determine whether birth weight is above or below 10th percentile
 compare_weight <- function(cutoff_val, observed_weight) {
   if (observed_weight >= cutoff_val) {
-    result <- "AGA (at or above 10th percentile)"
+    result <- "Not SGA (at or above 10th percentile)"
   } else {
     result <- "SGA (below 10th percentile)"
   }
   return(result)
 }
 
+# Returns TRUE or FALSE for SGA column
+is_sga <- function(result_string) {
+  if (result_string == "SGA (below 10th percentile)") {
+    return(TRUE)
+  } else {
+    return(FALSE)
+  }
+}
+
+# Apply process to input df
+process_df <- function(input_df) {
+  cols <- colnames(input_df)
+  
+  if (cols[2] == "duedate") {
+    
+    # Convert duedate and dob to dates
+    df <- input_df %>% mutate(duedate = as.Date(duedate, tryFormats = c("%m-%d-%y", "%m/%d/%y")),
+                              dob = as.Date(dob, tryFormats = c("%m-%d-%y", "%m/%d/%y")))
+    # Calculate ga from duedate and dob
+    df <- df %>% mutate(ga = calculate_ga(duedate, dob))
+    
+    # Parse sex
+    df <- df %>% mutate(sex = ifelse(str_to_lower(sex) %in% c("female", "f"), "Female", 
+                                     ifelse(str_to_lower(sex) %in% c("male", "m"), "Male", "Unknown")))
+    
+    # Determine cutoff
+    df$cutoff <- mapply(determine_cutoff, df$ga, df$sex)
+    
+    # Determine result based on cutoff and weight
+    df$result <- mapply(compare_weight, df$cutoff, df$weight)
+    
+    # Add SGA indicator
+    df$sga <- mapply(is_sga, df$result)
+      
+    # Drop intermediate columns
+    df <- df %>% select(id, duedate, dob, sex, weight, sga, result)
+    
+    return(df)
+    
+  } else if (cols[2] == "weeks") {
+    
+    # Convert weeks and days to ga
+    df <- input_df %>% mutate(ga = round(weeks + (days/7),2))
+    
+    # Parse sex
+    df <- df %>% mutate(sex = ifelse(str_to_lower(sex) %in% c("female", "f"), "Female", 
+                                     ifelse(str_to_lower(sex) %in% c("male", "m"), "Male", "Unknown")))
+    
+    # Determine cutoff
+    df$cutoff <- mapply(determine_cutoff, df$ga, df$sex)
+    
+    # Determine result based on cutoff and weight
+    df$result <- mapply(compare_weight, df$cutoff, df$weight)
+    
+    # Add SGA indicator
+    df$sga <- mapply(is_sga, df$result)
+    
+    # Drop intermediate columns
+    df <- df %>% select(id, weeks, days, sex, weight, sga, result)
+    
+    #View(df)
+    return(df)
+    
+  } else {
+    
+    # If the template is invalid, return the unaltered dataframe
+    return(input_df)
+    
+  }
+}

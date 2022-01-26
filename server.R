@@ -51,7 +51,9 @@ function(input, output) {
         stop(safeError(e))
       }
     )
-    return(df)
+    #return(df)
+    output <- process_df(df)
+    return(output)
   })
   
 }

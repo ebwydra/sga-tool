@@ -1,13 +1,5 @@
 function(input, output) {
   
-  output$dob_as_character <- renderText({
-    as.character(input$duedate)
-  })
-  
-  output$dob_raw <- renderText({
-    input$duedate
-  })
-  
   output$ga <- renderText({
     paste("GA at birth:", calculate_ga(input$duedate, input$dob), "weeks")
   })
@@ -17,7 +9,7 @@ function(input, output) {
     if (ga > 45 | ga < 22.57) {
       paste(determine_cutoff(ga, input$sex))
     } else {
-      paste("Cutoff:", determine_cutoff(ga, input$sex), "grams")
+      paste("Cutoff for GA and sex:", determine_cutoff(ga, input$sex), "grams")
     }
   })
   
@@ -32,4 +24,19 @@ function(input, output) {
     
   })
   
+  output$date_template <- downloadHandler(
+    filename = "date-template.csv",
+    content = function(file) {
+      write.csv(date_template, file, row.names=FALSE)
+    }
+  )
+  
+  output$ga_template <- downloadHandler(
+    filename = "ga-template.csv",
+    content = function(file) {
+      write.csv(ga_template, file, row.names=FALSE)
+    }
+  )
+  
 }
+

@@ -40,8 +40,8 @@ function(input, output) {
   
   output$table_contents <- renderTable({
     
+    # Parse upload contents
     req(input$uploaded_file)
-    
     tryCatch(
       {
         df <- read.csv(input$uploaded_file$datapath)
@@ -52,6 +52,8 @@ function(input, output) {
       }
     )
     #return(df)
+    
+    # Determine SGA for subjects in uploaded table
     output <- process_df(df)
     return(output)
   })

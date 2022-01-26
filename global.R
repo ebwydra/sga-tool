@@ -70,10 +70,11 @@ process_df <- function(input_df) {
   if (cols[2] == "duedate") {
     
     # Convert duedate and dob to dates
-    df <- input_df %>% mutate(duedate = as.Date(duedate, tryFormats = c("%m-%d-%y", "%m/%d/%y")),
-                              dob = as.Date(dob, tryFormats = c("%m-%d-%y", "%m/%d/%y")))
+    df <- input_df %>% mutate(duedate_num = as.Date(duedate, tryFormats = c("%m-%d-%y", "%m/%d/%y")),
+                              dob_num = as.Date(dob, tryFormats = c("%m-%d-%y", "%m/%d/%y")))
+    
     # Calculate ga from duedate and dob
-    df <- df %>% mutate(ga = calculate_ga(duedate, dob))
+    df <- df %>% mutate(ga = calculate_ga(duedate_num, dob_num))
     
     # Parse sex
     df <- df %>% mutate(sex = ifelse(str_to_lower(sex) %in% c("female", "f"), "Female", 
@@ -119,8 +120,8 @@ process_df <- function(input_df) {
     
   } else {
     
-    # If the template is invalid, return the unaltered dataframe
-    return(input_df)
+    # If the template is not recognized, return NULL
+    return(NULL)
     
   }
 }

@@ -24,7 +24,10 @@ fluidPage(
                                     multiple = FALSE,
                                     accept = c("text/csv", 
                                                "text/comma-separated-values,text/plain",
-                                               ".csv"))
+                                               ".csv")),
+                          p(strong("4. Download results (CSV)")),
+                          helpText("Download a table containing your results in CSV format."),
+                          downloadButton("result_download", "Download results")
                         ),
                         mainPanel(
                           tableOutput("table_contents")

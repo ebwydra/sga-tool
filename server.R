@@ -1,5 +1,7 @@
 function(input, output) {
   
+  # Reactives
+  
   ga <- reactive({
     calculate_ga(input$duedate, input$dob)
   })
@@ -20,13 +22,30 @@ function(input, output) {
     plot_weight(ga(), input$weight)
   })
   
+  result_table <- reactive({
+    req(input$uploaded_file)
+    tryCatch(
+      {
+        df <- read.csv(input$uploaded_file$datapath)
+      },
+      error = function(e) {
+        # return a safeError if a parsing error occurs
+        stop(safeError(e))
+      }
+    )
+    
+    # Determine SGA for subjects in uploaded table
+    output <- process_df(df)
+    return(output)
+  })
+  
+  # Output rendering
+  
   output$ga <- renderText({
-    #paste("GA at birth:", calculate_ga(input$duedate, input$dob), "weeks")
     paste("GA at birth:", ga(), "weeks")
   })
   
   output$cutoff <- renderText({
-    #ga <- calculate_ga(input$duedate, input$dob)
     if (ga() > 45 | ga() < 22.57) {
       paste(cutoff())
     } else {
@@ -61,24 +80,15 @@ function(input, output) {
   )
   
   output$table_contents <- renderTable({
-    
-    # Parse upload contents
-    req(input$uploaded_file)
-    tryCatch(
-      {
-        df <- read.csv(input$uploaded_file$datapath)
-      },
-      error = function(e) {
-        # return a safeError if a parsing error occurs
-        stop(safeError(e))
-      }
-    )
-    #return(df)
-    
-    # Determine SGA for subjects in uploaded table
-    output <- process_df(df)
-    return(output)
+    result_table()
   })
+  
+  output$result_download <- downloadHandler(
+    filename = "sga_results.csv",
+    content = function(file) {
+      write.csv(result_table(), file, row.names=FALSE)
+    }
+  )
   
 }
 

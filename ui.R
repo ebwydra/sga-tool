@@ -42,7 +42,8 @@ fluidPage(
                mainPanel(
                  verbatimTextOutput("ga"),
                  verbatimTextOutput("cutoff"),
-                 verbatimTextOutput("result")
+                 verbatimTextOutput("result"),
+                 plotOutput('growth_plot')
                )
              ))
     

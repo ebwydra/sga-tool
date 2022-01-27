@@ -42,22 +42,22 @@ function(input, output) {
   # Output rendering
   
   output$ga <- renderText({
-    paste("GA at birth:", ga(), "weeks")
+    paste("<strong>", "GA at birth:", "</strong>", ga(), "weeks")
   })
   
   output$cutoff <- renderText({
     if (ga() > 45 | ga() < 22.57) {
-      paste(cutoff())
+      paste("<font color=\"#F21B3F\"><strong>Error: </strong>", cutoff(), " GA must be between 22.57 weeks (22 weeks 4 days) and 45 weeks.</font>")
     } else {
-      paste("Cutoff for GA and sex:", cutoff(), "grams")
+      paste("<strong>", "SGA cutoff based on GA and sex:", "</strong>", cutoff(), "grams")
     }
   })
 
   output$result <- renderText({
     if (is.null(result())) {
-      paste("GA must be between 22.57 weeks (22 weeks 4 days) and 45 weeks.")
+      paste(NULL)
     } else {
-      paste("Result:", result())
+      paste("<strong>", "Result:", "</strong>", result())
     }
   })
   

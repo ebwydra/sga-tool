@@ -1,9 +1,28 @@
 fluidPage(
   
-  titlePanel("SGA Tool"),
+  titlePanel("Small for Gestational Age (SGA) Tool"),
   p("Determine whether newborn babies are an appropriate size for gestational age at birth based on the 2013 Fenton growth charts. Enter information for a single baby directly via the user interface, or get results for multiple babies via file upload using one of two easy-to-use templates."),
-  p(strong("Data Source:"), "Fenton TR, Kim JH. A systematic review and meta-analysis to revise the Fenton growth chart for preterm infants. BMC Pediatr. 2013;13:59. doi:10.1186/1471-2431-13-59"),
+  p(strong("Data Source:"), "Fenton TR, Kim JH. A systematic review and meta-analysis to revise the Fenton growth chart for preterm infants. BMC Pediatr. 2013;13:59.", a(href="https://doi.org/10.1186/1471-2431-13-59", "doi:10.1186/1471-2431-13-59")),
   navbarPage("Select Format",
+             
+             tabPanel("Single Subject",
+                      sidebarLayout(
+                        sidebarPanel(
+                          dateInput("duedate", label="Due date (mm-dd-yyyy)", format="mm-dd-yyyy"),
+                          dateInput("dob", label="Date of birth (mm-dd-yyyy)", format="mm-dd-yyyy"),
+                          selectInput("sex", label="Sex", choices=c("Female", "Male", "Unknown")),
+                          numericInput("weight", label="Weight at birth (grams)", 3000)
+                        ),
+                        mainPanel(
+                          htmlOutput("ga"),
+                          htmlOutput("cutoff"),
+                          htmlOutput("result"),
+                          br(),
+                          plotOutput('growth_plot')
+                        )
+                      )),
+             
+             
              tabPanel("Multiple Subjects",
                       sidebarLayout(
                         sidebarPanel(
@@ -32,25 +51,7 @@ fluidPage(
                         mainPanel(
                           tableOutput("table_contents")
                         )
-                      )),         
-             
-    tabPanel("Single Subject",
-             sidebarLayout(
-               sidebarPanel(
-                 dateInput("duedate", label="Due date (mm-dd-yyyy)", format="mm-dd-yyyy"),
-                 dateInput("dob", label="Date of birth (mm-dd-yyyy)", format="mm-dd-yyyy"),
-                 selectInput("sex", label="Sex", choices=c("Female", "Male", "Unknown")),
-                 numericInput("weight", label="Weight at birth (grams)", 3000)
-               ),
-               mainPanel(
-                 verbatimTextOutput("ga"),
-                 verbatimTextOutput("cutoff"),
-                 verbatimTextOutput("result"),
-                 plotOutput('growth_plot')
-               )
-             ))
-    
-     
+                      ))        
   )
 )
 

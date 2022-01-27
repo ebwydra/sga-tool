@@ -21,8 +21,6 @@ cutoffs_gathered <- cutoffs %>% select(ga = numeric, Female = f10, Male = m10, U
 base_plot <- ggplot(cutoffs_gathered, aes(x=ga, y=val)) +
   ylim(0, 8000) +
   geom_line(aes(color=Sex, linetype=Sex), size=1) +
-  #scale_color_manual(values = c("red", "steelblue", "grey")) +
-  #scale_color_manual(values = c("#EE4266", "#540D6E", "grey")) +
   scale_color_manual(values = c("#F21B3F", "#083D77", "#B7C3F3")) +
   theme_light() +
   labs(title="10th percentile growth curves for male and female infants",
@@ -148,7 +146,6 @@ process_df <- function(input_df) {
 plot_weight <- function(x_ga, y_weight) {
   plot <- base_plot + 
     geom_point(x=x_ga, y=y_weight, color= "#0D160B", fill="#0D160B", shape=19, size=4) +  
-    #geom_point(x=x_ga, y=y_weight, size=4, color="#FFD23F", shape=20)
     geom_point(x=x_ga, y=y_weight, size=4, color="#ABFF4F", shape=20)
   return(plot)
 }

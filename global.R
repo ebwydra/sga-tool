@@ -3,6 +3,8 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 library(ggplot2)
+library(bslib)
+library(ggimage)
 
 #########
 # SETUP #
@@ -21,7 +23,7 @@ cutoffs_gathered <- cutoffs %>% select(ga = numeric, Female = f10, Male = m10, U
 base_plot <- ggplot(cutoffs_gathered, aes(x=ga, y=val)) +
   ylim(0, 8000) +
   geom_line(aes(color=Sex, linetype=Sex), size=1) +
-  scale_color_manual(values = c("#F21B3F", "#083D77", "#B7C3F3")) +
+  scale_color_manual(values = c("#A991D4", "#593196", "#CAC4CE")) +
   theme_light() +
   labs(title="10th percentile growth curves for male and female infants",
        subtitle="22 weeks 4 days (22.57 weeks) through 45 weeks 0 days (45.00 weeks)",
@@ -145,7 +147,9 @@ process_df <- function(input_df) {
 # Add point to plot
 plot_weight <- function(x_ga, y_weight) {
   plot <- base_plot + 
-    geom_point(x=x_ga, y=y_weight, color= "#0D160B", fill="#0D160B", shape=19, size=4) +  
-    geom_point(x=x_ga, y=y_weight, size=4, color="#ABFF4F", shape=20)
+    #geom_point(x=x_ga, y=y_weight, color= "#070707", fill="#070707", shape=19, size=4) +  
+    #geom_point(x=x_ga, y=y_weight, size=4, color="#EFA31D", shape=20) 
+    geom_image(x=x_ga, y=y_weight, image="baby.png", size=0.05, asp=2) +
+    theme(aspect.ratio = 1/2)
   return(plot)
 }

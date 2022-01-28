@@ -21,7 +21,7 @@ cutoffs_gathered <- cutoffs %>% select(ga = numeric, Female = f10, Male = m10, U
 
 # Plot growth curves
 base_plot <- ggplot(cutoffs_gathered, aes(x=ga, y=val)) +
-  ylim(0, 8000) +
+  ylim(0, 6500) +
   geom_line(aes(color=Sex, linetype=Sex), size=1) +
   scale_color_manual(values = c("#A991D4", "#593196", "#CAC4CE")) +
   theme_light() +

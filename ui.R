@@ -2,8 +2,8 @@ fluidPage(
   theme = bs_theme(bootswatch = "pulse"),
   titlePanel("Small for Gestational Age (SGA) Tool"),
   p("Determine whether newborn babies are an appropriate size for gestational age at birth based on the 2013 Fenton growth charts."), 
-  p("Enter information for a single baby directly via the user interface, or get results for multiple babies via file upload using one of two easy-to-use templates."),
-  p(strong("Data Source:"), "Fenton TR, Kim JH.", a(href="https://doi.org/10.1186/1471-2431-13-59", "A systematic review and meta-analysis to revise the Fenton growth chart for preterm infants."), "BMC Pediatr. 2013;13:59."),
+  p(strong("How to use:"), "Enter information for a single baby directly via the user interface, or get results for multiple babies via file upload using one of two easy-to-use templates."),
+  p(strong("Data source:"), "Fenton TR, Kim JH.", a(href="https://doi.org/10.1186/1471-2431-13-59", "A systematic review and meta-analysis to revise the Fenton growth chart for preterm infants."), "BMC Pediatr. 2013;13:59."),
   navbarPage("Select Format",
              
              tabPanel("Single Subject",

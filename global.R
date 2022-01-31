@@ -98,47 +98,10 @@ process_df <- function(input_df) {
     
     # Calculate ga from duedate and dob
     df <- df %>% mutate(ga = calculate_ga(duedate_num, dob_num))
-    
-    # Parse sex
-    df <- df %>% mutate(sex = ifelse(str_to_lower(sex) %in% c("female", "f"), "Female", 
-                                     ifelse(str_to_lower(sex) %in% c("male", "m"), "Male", "Unknown")))
-    
-    # Determine cutoff
-    df$cutoff <- mapply(determine_cutoff, df$ga, df$sex)
-    
-    # Determine result based on cutoff and weight
-    df$result <- mapply(compare_weight, df$cutoff, df$weight)
-    
-    # Add SGA indicator
-    df$sga <- mapply(is_sga, df$result)
-      
-    # Drop intermediate columns
-    df <- df %>% select(id, duedate, dob, sex, weight, sga, result)
-    
-    return(df)
-    
   } else if (setequal(cols[1:5], colnames(ga_template))) {
-    
-    # Convert weeks and days to ga
-    df <- input_df %>% mutate(ga = round(weeks + (days/7),2))
-    
-    # Parse sex
-    df <- df %>% mutate(sex = ifelse(str_to_lower(sex) %in% c("female", "f"), "Female", 
-                                     ifelse(str_to_lower(sex) %in% c("male", "m"), "Male", "Unknown")))
-    
-    # Determine cutoff
-    df$cutoff <- mapply(determine_cutoff, df$ga, df$sex)
-    
-    # Determine result based on cutoff and weight
-    df$result <- mapply(compare_weight, df$cutoff, df$weight)
-    
-    # Add SGA indicator
-    df$sga <- mapply(is_sga, df$result)
-    
-    # Drop intermediate columns
-    df <- df %>% select(id, weeks, days, sex, weight, sga, result)
-    
-    return(df)
+      
+      # Convert weeks and days to ga
+      df <- input_df %>% mutate(ga = round(weeks + (days/7),2))
     
   } else {
     
@@ -146,6 +109,33 @@ process_df <- function(input_df) {
     return(NULL)
     
   }
+  
+  # For both templates, parse sex
+  df <- df %>% mutate(sex = ifelse(str_to_lower(sex) %in% c("female", "f"), "Female", 
+                                   ifelse(str_to_lower(sex) %in% c("male", "m"), "Male", "Unknown")))
+    
+  # Determine cutoff
+  df$cutoff <- mapply(determine_cutoff, df$ga, df$sex)
+    
+  # Determine result based on cutoff and weight
+  df$result <- mapply(compare_weight, df$cutoff, df$weight)
+    
+  # Add SGA indicator
+  df$sga <- mapply(is_sga, df$result)
+  
+  # Conditional based on template    
+  if (setequal(cols[1:5], colnames(date_template)) == TRUE) {
+    # Drop intermediate columns
+    df <- df %>% select(id, duedate, dob, sex, weight, sga, result)
+  } else if (setequal(cols[1:5], colnames(ga_template))) {
+    # Drop intermediate columns
+    df <- df %>% select(id, weeks, days, sex, weight, sga, result)
+  } else {
+    return(NULL)
+  }
+  
+  return(df)
+    
 }
 
 # Add point to plot
@@ -157,8 +147,3 @@ plot_weight <- function(x_ga, y_weight) {
     theme(aspect.ratio = 1/2)
   return(plot)
 }
-
-test_data <- read.csv('test-data.csv')
-#View(test_data)
-result <- process_df(test_data)
-View(result)

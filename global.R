@@ -11,7 +11,7 @@ library(ggimage)
 #########
 
 # Read in cutoff data and templates
-cutoffs <- read.csv("cutoffs.csv", fileEncoding="UTF-8-BOM")
+cutoffs <- read.csv("data/cutoffs.csv", fileEncoding="UTF-8-BOM")
 date_template <- read.csv("templates/date-template.csv", fileEncoding="UTF-8-BOM")
 ga_template <- read.csv("templates/ga-template.csv", fileEncoding="UTF-8-BOM")
 

@@ -49,7 +49,7 @@ calculate_ga <- function(duedate, dob) {
 determine_cutoff <- function(ga, sex) {
   
   # Check whether calculated GA is valid
-  if (ga > 45 | ga < 22.57) {
+  if (is.na(ga) | ga > 45 | ga < 22.57) {
     cutoff_val <- "Out of range!"
     return(cutoff_val)
   } 
@@ -64,10 +64,14 @@ determine_cutoff <- function(ga, sex) {
 
 # Determine whether birth weight is above or below 10th percentile
 compare_weight <- function(cutoff_val, observed_weight) {
-  if (observed_weight >= cutoff_val) {
+  if (cutoff_val == "Out of range!") {
+    result <- "N/A (GA is out of range)"
+  } else if (observed_weight >= cutoff_val) {
     result <- "Not SGA (at or above 10th percentile)"
-  } else {
+  } else if (observed_weight < cutoff_val) {
     result <- "SGA (below 10th percentile)"
+  } else {
+    result <- NA
   }
   return(result)
 }
@@ -76,8 +80,10 @@ compare_weight <- function(cutoff_val, observed_weight) {
 is_sga <- function(result_string) {
   if (result_string == "SGA (below 10th percentile)") {
     return(TRUE)
-  } else {
+  } else if (result_string == "Not SGA (at or above 10th percentile)") {
     return(FALSE)
+  } else {
+    return(NA)
   }
 }
 
@@ -85,7 +91,6 @@ is_sga <- function(result_string) {
 process_df <- function(input_df) {
   cols <- colnames(input_df)
   
-  #if (cols[2] == "duedate") {
   if (setequal(cols[1:5], colnames(date_template)) == TRUE)  {
     # Convert duedate and dob to dates
     df <- input_df %>% mutate(duedate_num = as.Date(duedate, tryFormats = c("%m-%d-%y", "%m/%d/%y")),
@@ -133,7 +138,6 @@ process_df <- function(input_df) {
     # Drop intermediate columns
     df <- df %>% select(id, weeks, days, sex, weight, sga, result)
     
-    #View(df)
     return(df)
     
   } else {
@@ -153,3 +157,8 @@ plot_weight <- function(x_ga, y_weight) {
     theme(aspect.ratio = 1/2)
   return(plot)
 }
+
+test_data <- read.csv('test-data.csv')
+#View(test_data)
+result <- process_df(test_data)
+View(result)

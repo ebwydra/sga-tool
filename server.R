@@ -81,7 +81,7 @@ function(input, output) {
   
   output$table_contents <- renderTable({
     result_table()
-  })
+  }, striped = TRUE, bordered = TRUE, hover = TRUE, na = "")
   
   output$result_download <- downloadHandler(
     filename = "sga_results.csv",

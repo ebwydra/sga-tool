@@ -85,8 +85,8 @@ is_sga <- function(result_string) {
 process_df <- function(input_df) {
   cols <- colnames(input_df)
   
-  if (cols[2] == "duedate") {
-    
+  #if (cols[2] == "duedate") {
+  if (setequal(cols[1:5], colnames(date_template)) == TRUE)  {
     # Convert duedate and dob to dates
     df <- input_df %>% mutate(duedate_num = as.Date(duedate, tryFormats = c("%m-%d-%y", "%m/%d/%y")),
                               dob_num = as.Date(dob, tryFormats = c("%m-%d-%y", "%m/%d/%y")))
@@ -112,7 +112,7 @@ process_df <- function(input_df) {
     
     return(df)
     
-  } else if (cols[2] == "weeks") {
+  } else if (setequal(cols[1:5], colnames(ga_template))) {
     
     # Convert weeks and days to ga
     df <- input_df %>% mutate(ga = round(weeks + (days/7),2))
